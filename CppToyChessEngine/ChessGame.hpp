@@ -15,7 +15,7 @@ public:
     
     // TODO: handle pawn promotion, castling
     bool makeMoveMaybe(Coordinate source, Coordinate destination) {
-        Move move = {source, destination};
+        MoveSimple move = {source, destination};
         chessBoard = chessBoard.boardByMoving(move);
         return true;
     }

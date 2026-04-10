@@ -119,7 +119,7 @@ private:
     // 1st index - file, 2nd - rank
     uint8_t board[BOARD_SIZE][BOARD_SIZE];
     
-    ChessBoard(uint8_t existingBoard[BOARD_SIZE][BOARD_SIZE], Move move) {
+    ChessBoard(uint8_t existingBoard[BOARD_SIZE][BOARD_SIZE], MoveSimple move) {
         for (int i = 0; i < BOARD_SIZE; i++) {
             std::copy(std::begin(existingBoard[i]), std::end(existingBoard[i]), std::begin(board[i]));
         }
@@ -175,7 +175,7 @@ public:
         return sstr.str();
     }
     
-    ChessBoard boardByMoving(Move move) {
+    ChessBoard boardByMoving(MoveSimple move) {
         return ChessBoard(board, move);
     }
     
@@ -206,11 +206,15 @@ public:
                             continue;
                         }
 
-                        possibleMoves.push_back({currentCoordinate, destination});
+                        possibleMoves.push_back(MoveSimple(currentCoordinate, destination));
                     }
                 }
             }
         })
+        
+        // TODO: check if castling is possible
+        // if !(king has moved) && !(rook1 has moved) && (rook, king on same rank)
+        // && (space between king and rook is empty) && (space between kings source and destination is not attacked)
         return possibleMoves;
     }
 };
