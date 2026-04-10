@@ -22,7 +22,9 @@ public:
     
     std::vector<Move> possibleMovesForPlayer(uint8_t player) {
         // TODO: check en passant
-        // TODO: implement
-        return {};
+        // TODO: check castling
+        // TODO: check 3 move rule
+        // TODO: check 50 move rule
+        return chessBoard.possibleMovesForPlayer(player);
     }
 };
