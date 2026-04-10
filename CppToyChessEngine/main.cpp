@@ -13,8 +13,18 @@ int main(int argc, const char * argv[]) {
     
     const std::vector<Move> moves = game.possibleMovesForPlayer(0);
     
-    std::cout << "Possible moves:\n";
+    std::cout << "Possible moves for white:\n";
     for (auto move : moves) {
+        std::cout << move << "\n";
+    }
+    
+    
+    for (int16_t i = 0; i < 8; i++) {
+        game.makeMoveMaybe({i, 6}, {i, 5});
+    }
+    std::cout << game.asString() << "\n";
+    std::cout << "Possible moves for black:\n";
+    for (auto move : game.possibleMovesForPlayer(1)) {
         std::cout << move << "\n";
     }
     

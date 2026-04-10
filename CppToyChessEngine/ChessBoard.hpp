@@ -6,7 +6,9 @@
 #import "Coordinate.hpp"
 
 /*
- Pieces:
+ Every piece is encoded by 16 bits
+ 
+ First 4 bits are for piece type:
  0x0 - Empty
  0x1 - Pawn
  0x2 - Knight
@@ -14,8 +16,20 @@
  0x4 - Rook
  0x5 - Queen
  0x6 - King
+ 
+ 2nd 4 bits for color:
+ 0x0? - white
+ 0x1? - black
+ 
+ 3nd 4 bits are indicating if piece has moved or not:
+ 0x0?? - not moved
+ 0b0001'????'???? - moved
  */
 typedef uint16_t PieceValueType;
+
+constexpr uint16_t kHasMovedMask = 0xF00;
+constexpr uint16_t kHasMovedBit = 0b1'0000'0000;
+
 #define BOARD_SIZE 8
 const std::vector<PieceValueType> firstRankPieces =
     {4, 2, 3, 5, 6, 3, 2, 4};
@@ -26,6 +40,14 @@ for (int16_t RANK = BOARD_SIZE - 1; RANK >= 0; RANK--) {\
         const auto CURRENT_PIECE = board[FILE][RANK];\
         CODE\
     } \
+}
+
+bool didPieceMove(PieceValueType value) {
+    return value & kHasMovedBit;
+}
+
+bool doesPieceBelongToPlayer(PieceValueType value, uint8_t player) {
+    return (value & 0x10) / 0x10 == player;
 }
 
 char pieceFromValue(PieceValueType value) {
@@ -69,14 +91,19 @@ char pieceFromValue(PieceValueType value) {
 std::vector<Coordinate> possibleMoveTargetsForPieceValue(PieceValueType value) {
     switch (value % 0x10) {
         case 1:
-            // TODO: add double first move
+            // Pawn
             if ((value & 0x10) == 0) {
-                return {{0, 1}};
+                return didPieceMove(value)
+                    ? std::vector<Coordinate>{Coordinate({0, 1})}
+                    : std::vector<Coordinate>{Coordinate({0, 1}), (Coordinate{0, 2})};
             } else {
-                return {{0, -1}};
+                return didPieceMove(value)
+                    ? std::vector<Coordinate>{Coordinate{0, -1}}
+                    : std::vector<Coordinate>{Coordinate{0, -1}, Coordinate{0, -2}};
             }
             break;
         case 2:
+            // Knight
             return {
                 {1, 2},
                 {1, -2},
@@ -97,6 +124,7 @@ std::vector<Coordinate> possibleMoveTargetsForPieceValue(PieceValueType value) {
             // TODO: queen
             return {};
         case 6:
+            // King
             return {
                 {-1, -1},
                 {-1, 0},
@@ -123,7 +151,7 @@ private:
         for (int i = 0; i < BOARD_SIZE; i++) {
             std::copy(std::begin(existingBoard[i]), std::end(existingBoard[i]), std::begin(board[i]));
         }
-        board[move.destination.file][move.destination.rank] = board[move.source.file][move.source.rank];
+        board[move.destination.file][move.destination.rank] = board[move.source.file][move.source.rank] | kHasMovedBit;
         board[move.source.file][move.source.rank] = 0;
     }
     
@@ -190,7 +218,7 @@ public:
             if (CURRENT_PIECE == 0) {
                 continue;
             }
-            if ((CURRENT_PIECE & 0x10) == player) {
+            if (doesPieceBelongToPlayer(CURRENT_PIECE, player)) {
                 const Coordinate currentCoordinate({FILE, RANK});
                 for (const auto& offset : possibleMoveTargetsForPieceValue(CURRENT_PIECE)) {
                     const Coordinate destination = currentCoordinate + offset;
@@ -202,7 +230,7 @@ public:
                         // TODO: add moves for pawn promotion
                         // TODO: add moves for castling
                         const PieceValueType destinationPiece = board[destination.file][destination.rank];
-                        if (destinationPiece > 0 && ((destinationPiece & 0x10) == player)) {
+                        if (destinationPiece > 0 && doesPieceBelongToPlayer(destinationPiece, player)) {
                             continue;
                         }
 
