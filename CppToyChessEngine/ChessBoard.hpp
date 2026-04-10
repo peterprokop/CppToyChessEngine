@@ -4,6 +4,7 @@
 #include <iterator>
 
 #import "Coordinate.hpp"
+#import "PieceType.hpp"
 
 /*
  Every piece is encoded by 16 bits
@@ -27,8 +28,16 @@
  */
 typedef uint16_t PieceValueType;
 
+constexpr uint16_t kPieceTypeMask = 0xF;
 constexpr uint16_t kHasMovedMask = 0xF00;
 constexpr uint16_t kHasMovedBit = 0b1'0000'0000;
+
+constexpr std::array<PieceType, 4> kPawnPromotionOptions {
+    PieceType::Knight,
+    PieceType::Bishop,
+    PieceType::Rook,
+    PieceType::Queen,
+};
 
 #define BOARD_SIZE 8
 const std::vector<PieceValueType> firstRankPieces =
@@ -48,6 +57,14 @@ bool didPieceMove(PieceValueType value) {
 
 bool doesPieceBelongToPlayer(PieceValueType value, uint8_t player) {
     return (value & 0x10) / 0x10 == player;
+}
+
+bool isPawn(PieceValueType value) {
+    return (value & kPieceTypeMask) == 0x1;
+}
+
+bool isLastRank(Coordinate destination) {
+    return (destination.rank == 0) || (destination.rank == BOARD_SIZE - 1);
 }
 
 char pieceFromValue(PieceValueType value) {
@@ -220,6 +237,7 @@ public:
             }
             if (doesPieceBelongToPlayer(CURRENT_PIECE, player)) {
                 const Coordinate currentCoordinate({FILE, RANK});
+                // Process regular pawn, knight and king moves
                 for (const auto& offset : possibleMoveTargetsForPieceValue(CURRENT_PIECE)) {
                     const Coordinate destination = currentCoordinate + offset;
                     if (isWithinBoard(destination)) {
@@ -227,14 +245,31 @@ public:
                         // TODO: check if move generates check for own king
                         // TODO: add moves for pawn capture
                         // TODO: add moves for en passant capture
-                        // TODO: add moves for pawn promotion
                         // TODO: add moves for castling
                         const PieceValueType destinationPiece = board[destination.file][destination.rank];
                         if (destinationPiece > 0 && doesPieceBelongToPlayer(destinationPiece, player)) {
                             continue;
                         }
-
-                        possibleMoves.push_back(MoveSimple(currentCoordinate, destination));
+                        
+                        if (isPawn(CURRENT_PIECE)
+                            && isLastRank(destination)
+                        ) {
+                            // Handle pawn promotion
+                            std::for_each(
+                              kPawnPromotionOptions.begin(),
+                              kPawnPromotionOptions.end(),
+                              [&](PieceType pieceType)
+                              {
+                                  possibleMoves.push_back(MovePawnPromotion({
+                                      pieceType,
+                                      MoveSimple(currentCoordinate, destination)
+                                  }));
+                              }
+                            );
+                        } else {
+                            // Non-pawn-promotion
+                            possibleMoves.push_back(MoveSimple(currentCoordinate, destination));
+                        }
                     }
                 }
             }

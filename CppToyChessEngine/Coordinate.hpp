@@ -1,4 +1,5 @@
-#include <variant>
+#import <variant>
+#import "PieceType.hpp"
 
 struct Coordinate {
     friend std::ostream& operator<<(std::ostream&, const Coordinate&);
@@ -41,7 +42,12 @@ struct MoveCastling {
     MoveSimple rooksMove;
 };
 
-typedef std::variant<MoveSimple, MoveCastling> Move;
+struct MovePawnPromotion {
+    PieceType promoteTo;
+    MoveSimple pawnsMove;
+};
+
+typedef std::variant<MoveSimple, MoveCastling, MovePawnPromotion> Move;
 
 std::ostream & operator << (std::ostream &outs, const Move &move) {
     std::visit([&](auto&& arg)
@@ -54,6 +60,8 @@ std::ostream & operator << (std::ostream &outs, const Move &move) {
             outs << ((arg.type == MoveCastlingType::KingSide)
                 ? "0-0"
                 : "0-0-0");
+        } else if constexpr (std::is_same_v<T, MovePawnPromotion>) {
+            outs << arg.pawnsMove.source << " -> " << arg.pawnsMove.destination;
         } else {
             static_assert(false, "non-exhaustive visitor");
         }
