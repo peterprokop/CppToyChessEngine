@@ -15,9 +15,9 @@
  0x5 - Queen
  0x6 - King
  */
-
+typedef uint16_t PieceValueType;
 #define BOARD_SIZE 8
-const std::vector<uint8_t> firstRankPieces =
+const std::vector<PieceValueType> firstRankPieces =
     {4, 2, 3, 5, 6, 3, 2, 4};
 
 #define ITERATE_BOARD(CODE) \
@@ -28,7 +28,7 @@ for (int16_t RANK = BOARD_SIZE - 1; RANK >= 0; RANK--) {\
     } \
 }
 
-char pieceFromValue(uint8_t value) {
+char pieceFromValue(PieceValueType value) {
     const bool isWhite = ((value & 0x10) == 0);
     char printablePiece = '_';
     switch (value % 0x10) {
@@ -66,7 +66,7 @@ char pieceFromValue(uint8_t value) {
     return printablePiece;
 }
 
-std::vector<Coordinate> possibleMoveTargetsForPieceValue(uint8_t value) {
+std::vector<Coordinate> possibleMoveTargetsForPieceValue(PieceValueType value) {
     switch (value % 0x10) {
         case 1:
             // TODO: add double first move
@@ -117,9 +117,9 @@ std::vector<Coordinate> possibleMoveTargetsForPieceValue(uint8_t value) {
 class ChessBoard {
 private:
     // 1st index - file, 2nd - rank
-    uint8_t board[BOARD_SIZE][BOARD_SIZE];
+    PieceValueType board[BOARD_SIZE][BOARD_SIZE];
     
-    ChessBoard(uint8_t existingBoard[BOARD_SIZE][BOARD_SIZE], MoveSimple move) {
+    ChessBoard(PieceValueType existingBoard[BOARD_SIZE][BOARD_SIZE], MoveSimple move) {
         for (int i = 0; i < BOARD_SIZE; i++) {
             std::copy(std::begin(existingBoard[i]), std::end(existingBoard[i]), std::begin(board[i]));
         }
@@ -201,7 +201,7 @@ public:
                         // TODO: add moves for en passant capture
                         // TODO: add moves for pawn promotion
                         // TODO: add moves for castling
-                        const uint8_t destinationPiece = board[destination.file][destination.rank];
+                        const PieceValueType destinationPiece = board[destination.file][destination.rank];
                         if (destinationPiece > 0 && ((destinationPiece & 0x10) == player)) {
                             continue;
                         }
