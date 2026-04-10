@@ -1,5 +1,9 @@
 #import <iostream>
 #import <sstream>
+#include <algorithm>
+#include <iterator>
+
+#import "Coordinate.hpp"
 
 /*
  Pieces:
@@ -18,10 +22,10 @@ const std::vector<uint8_t> firstRankPieces =
 
 char pieceFromValue(uint8_t value) {
     const bool isWhite = ((value & 0x10) == 0);
-    char printablePiece = ' ';
+    char printablePiece = '_';
     switch (value % 0x10) {
         case 0:
-            printablePiece = ' ';
+            return ' ';
             break;
         case 1:
             printablePiece = 'p';
@@ -43,7 +47,7 @@ char pieceFromValue(uint8_t value) {
             break;
             
         default:
-            printablePiece = '?';
+            return '?';
             break;
     }
     
@@ -58,6 +62,15 @@ class ChessBoard {
 private:
     // 1st index - file, 2nd - rank
     uint8_t board[BOARD_SIZE][BOARD_SIZE];
+    
+    ChessBoard(uint8_t existingBoard[BOARD_SIZE][BOARD_SIZE], Move move) {
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            std::copy(std::begin(existingBoard[i]), std::end(existingBoard[i]), std::begin(board[i]));
+        }
+        board[move.destination.file][move.destination.rank] = board[move.source.file][move.source.rank];
+        board[move.source.file][move.source.rank] = 0;
+    }
+    
 public:
     ChessBoard() {
         // Default board for now
@@ -83,5 +96,9 @@ public:
             sstr << "\n";
         }
         return sstr.str();
+    }
+    
+    ChessBoard boardByMoving(Move move) {
+        return ChessBoard(board, move);
     }
 };

@@ -1,4 +1,5 @@
 #import "ChessBoard.hpp"
+#import "Coordinate.hpp"
 
 class ChessGame {
 private:
@@ -10,5 +11,18 @@ public:
     
     std::string asString() const {
         return chessBoard.asString();
+    }
+    
+    // TODO: handle pawn promotion, castling
+    bool makeMoveMaybe(Coordinate source, Coordinate destination) {
+        Move move = {source, destination};
+        chessBoard = chessBoard.boardByMoving(move);
+        return true;
+    }
+    
+    std::vector<Move> possibleMovesForPlayer(uint8_t player) {
+        // TODO: check en passant
+        // TODO: implement
+        return {};
     }
 };
