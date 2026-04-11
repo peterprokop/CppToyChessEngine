@@ -1,3 +1,5 @@
+#pragma once
+
 enum class PieceType: uint8_t {
     Pawn = 0x1,
     Knight = 0x2,

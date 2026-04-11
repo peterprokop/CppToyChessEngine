@@ -1,5 +1,9 @@
-#import <variant>
-#import "PieceType.hpp"
+#pragma once
+
+#include <variant>
+#include <type_traits>
+
+#include "PieceType.hpp"
 
 struct Coordinate {
     friend std::ostream& operator<<(std::ostream&, const Coordinate&);

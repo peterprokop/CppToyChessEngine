@@ -1,10 +1,11 @@
-#import <iostream>
-#import <sstream>
+#pragma once
+
+#include <iostream>
+#include <sstream>
 #include <algorithm>
 #include <iterator>
 
-#import "Coordinate.hpp"
-#import "PieceType.hpp"
+#include "Coordinate.hpp"
 
 /*
  Every piece is encoded by 16 bits

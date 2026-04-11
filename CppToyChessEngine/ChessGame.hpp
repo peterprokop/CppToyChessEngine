@@ -1,5 +1,8 @@
-#import "ChessBoard.hpp"
-#import "Coordinate.hpp"
+#pragma once
+
+#include <vector>
+
+#include "ChessBoard.hpp"
 
 class ChessGame {
 private:
