@@ -22,10 +22,28 @@
 		D23009602F87B01E004E918E /* CppToyChessEngine */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CppToyChessEngine; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		D2CF07D02F8A49D800BB3DC7 /* Exceptions for "CppToyChessEngineTests" folder in "Compile Sources" phase from "CppToyChessEngine" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = D230095C2F87B01E004E918E /* Sources */;
+			membershipExceptions = (
+				CMakeLists.txt,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D23009622F87B01E004E918E /* CppToyChessEngine */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = CppToyChessEngine;
+			sourceTree = "<group>";
+		};
+		D2CF07CC2F8A49B600BB3DC7 /* CppToyChessEngineTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D2CF07D02F8A49D800BB3DC7 /* Exceptions for "CppToyChessEngineTests" folder in "Compile Sources" phase from "CppToyChessEngine" target */,
+			);
+			path = CppToyChessEngineTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -44,6 +62,7 @@
 		D23009572F87B01E004E918E = {
 			isa = PBXGroup;
 			children = (
+				D2CF07CC2F8A49B600BB3DC7 /* CppToyChessEngineTests */,
 				D23009622F87B01E004E918E /* CppToyChessEngine */,
 				D23009612F87B01E004E918E /* Products */,
 			);
@@ -74,6 +93,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				D23009622F87B01E004E918E /* CppToyChessEngine */,
+				D2CF07CC2F8A49B600BB3DC7 /* CppToyChessEngineTests */,
 			);
 			name = CppToyChessEngine;
 			packageProductDependencies = (
@@ -93,6 +113,7 @@
 				TargetAttributes = {
 					D230095F2F87B01E004E918E = {
 						CreatedOnToolsVersion = 16.2;
+						LastSwiftMigration = 2630;
 					};
 				};
 			};
@@ -244,16 +265,21 @@
 		D23009682F87B01E004E918E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
 		D23009692F87B01E004E918E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
 		};
