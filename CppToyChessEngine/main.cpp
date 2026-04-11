@@ -29,5 +29,12 @@ int main(int argc, const char * argv[]) {
         std::cout << move << "\n";
     }
     
+    game.makeMoveMaybe({0, 5}, {0, 1});
+    std::cout << game.asString() << "\n";
+    std::cout << "Possible moves for black:\n";
+    for (auto move : game.possibleMovesForPlayer(1)) {
+        std::cout << move << "\n";
+    }
+    
     return 0;
 }

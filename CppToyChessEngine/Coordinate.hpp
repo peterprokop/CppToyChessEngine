@@ -65,7 +65,8 @@ std::ostream & operator << (std::ostream &outs, const Move &move) {
                 ? "0-0"
                 : "0-0-0");
         } else if constexpr (std::is_same_v<T, MovePawnPromotion>) {
-            outs << arg.pawnsMove.source << " -> " << arg.pawnsMove.destination;
+            outs << arg.pawnsMove.source << " -> " << arg.pawnsMove.destination
+                << algebraicNotationForPieceType(arg.promoteTo);
         } else {
             static_assert(false, "non-exhaustive visitor");
         }

@@ -251,22 +251,28 @@ public:
                         if (destinationPiece > 0 && doesPieceBelongToPlayer(destinationPiece, player)) {
                             continue;
                         }
-                        
-                        if (isPawn(CURRENT_PIECE)
-                            && isLastRank(destination)
-                        ) {
+                                                
+                        // Pawn logic
+                        if (isPawn(CURRENT_PIECE)) {
+                            // Pawn can't move forward if square is not empty
+                            if (destinationPiece != 0) {
+                                continue;
+                            }
+                            // TODO: Handle pawn promotion when capturing piece
                             // Handle pawn promotion
-                            std::for_each(
-                              kPawnPromotionOptions.begin(),
-                              kPawnPromotionOptions.end(),
-                              [&](PieceType pieceType)
-                              {
-                                  possibleMoves.push_back(MovePawnPromotion({
-                                      pieceType,
-                                      MoveSimple(currentCoordinate, destination)
-                                  }));
-                              }
-                            );
+                            if (isLastRank(destination)) {
+                                std::for_each(
+                                  kPawnPromotionOptions.begin(),
+                                  kPawnPromotionOptions.end(),
+                                  [&](PieceType pieceType)
+                                  {
+                                      possibleMoves.push_back(MovePawnPromotion({
+                                          pieceType,
+                                          MoveSimple(currentCoordinate, destination)
+                                      }));
+                                  }
+                              );
+                            }
                         } else {
                             // Non-pawn-promotion
                             possibleMoves.push_back(MoveSimple(currentCoordinate, destination));
