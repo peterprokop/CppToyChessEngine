@@ -348,9 +348,12 @@ public:
                                       }));
                                   }
                               );
+                            } else {
+                                // No promotion
+                                possibleMoves.push_back(MoveSimple(currentCoordinate, destination));
                             }
                         } else {
-                            // Non-pawn-promotion
+                            // Non-pawn logic
                             possibleMoves.push_back(MoveSimple(currentCoordinate, destination));
                         }
                     }
