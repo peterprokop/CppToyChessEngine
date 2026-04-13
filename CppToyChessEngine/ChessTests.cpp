@@ -72,7 +72,7 @@ ________
     
     EXPECT_EQ(whiteMoves, expectedWhiteMoves);
     
-    game.makeMoveMaybe({0,1}, {0,3});
+    game.makeMoveMaybe(MoveSimple({0,1}, {0,3}));
     
     // Check again
     std::vector<Move> whiteMovesAfterPawnMove = game.possibleMovesForPlayer(0);

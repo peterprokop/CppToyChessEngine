@@ -21,9 +21,25 @@ public:
     }
     
     // TODO: handle pawn promotion, castling
-    bool makeMoveMaybe(Coordinate source, Coordinate destination) {
-        MoveSimple move = {source, destination};
-        chessBoard = chessBoard.boardByMoving(move);
+    // TODO: add player arg, check if move is permitted
+    bool makeMoveMaybe(Move move) {
+        std::visit([&](auto&& arg)
+        {
+            using T = std::decay_t<decltype(arg)>;
+            
+            if constexpr (std::is_same_v<T, MoveSimple>) {
+                this->chessBoard = this->chessBoard.boardByMoving(std::get<MoveSimple>(move));
+            } else if constexpr (std::is_same_v<T, MoveCastling>) {
+                // Not implemented yet
+                std::abort();
+            } else if constexpr (std::is_same_v<T, MovePawnPromotion>) {
+                // Not implemented yet
+                std::abort();
+            } else {
+                static_assert(false, "non-exhaustive visitor");
+            }
+        }, move);
+        
         return true;
     }
     
