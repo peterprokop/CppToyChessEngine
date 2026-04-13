@@ -223,6 +223,12 @@ private:
         board[move.source.file][move.source.rank] = 0;
     }
     
+    ChessBoard(PieceValueType existingBoard[BOARD_SIZE][BOARD_SIZE]) {
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            std::copy(std::begin(existingBoard[i]), std::end(existingBoard[i]), std::begin(board[i]));
+        }
+    }
+    
     bool isWithinBoard(Coordinate coordinate) {
         return coordinate.file >= 0
             && coordinate.file < BOARD_SIZE
@@ -299,6 +305,16 @@ public:
     
     ChessBoard boardByMoving(MoveSimple move) {
         return ChessBoard(board, move);
+    }
+    
+    ChessBoard boardByChangingPieceType(PieceType pieceType, Coordinate coordinate) {
+        ChessBoard newBoard = ChessBoard(board);
+        PieceValueType pieceValue = newBoard.board[coordinate.file][coordinate.rank];
+        
+        newBoard.board[coordinate.file][coordinate.rank] =
+            (pieceValue & ~0xF) | (std::__to_underlying(pieceType) & 0xF);
+        
+        return newBoard;
     }
     
     /**

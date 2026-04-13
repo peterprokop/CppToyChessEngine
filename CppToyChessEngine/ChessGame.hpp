@@ -33,8 +33,13 @@ public:
                 // Not implemented yet
                 std::abort();
             } else if constexpr (std::is_same_v<T, MovePawnPromotion>) {
-                // Not implemented yet
-                std::abort();
+                MovePawnPromotion movePawnPromo = std::get<MovePawnPromotion>(move);
+                this->chessBoard = this->chessBoard
+                    .boardByMoving(movePawnPromo.pawnsMove)
+                    .boardByChangingPieceType(
+                                              movePawnPromo.promoteTo,
+                                              movePawnPromo.pawnsMove.destination
+                                              );
             } else {
                 static_assert(false, "non-exhaustive visitor");
             }

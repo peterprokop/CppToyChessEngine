@@ -45,6 +45,28 @@ K_______
     EXPECT_EQ(whiteMoves.size(), 7);
     
     EXPECT_EQ(whiteMoves, expectedWhiteMoves);
+    
+    // Promote to knight
+    
+    game.makeMoveMaybe(MovePawnPromotion{
+                           PieceType::Knight,
+                           MoveSimple({0,6}, {0,7}),
+                       });
+    
+    std::vector<Move> whiteMovesAfterPromo = game.possibleMovesForPlayer(0);
+    std::vector<Move> expectedWhiteMovesAfterPromo{
+        // Knight
+        MoveSimple({0,7}, {1,5}),
+        MoveSimple({0,7}, {2,6}),
+        // King
+        MoveSimple({0,0}, {0,1}),
+        MoveSimple({0,0}, {1,0}),
+        MoveSimple({0,0}, {1,1}),
+    };
+    
+    EXPECT_EQ(whiteMovesAfterPromo.size(), 5);
+    
+    EXPECT_EQ(whiteMovesAfterPromo, expectedWhiteMovesAfterPromo);
 }
 
 TEST(ChessGameTest, PawnMoves) {
