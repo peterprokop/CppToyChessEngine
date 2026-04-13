@@ -67,6 +67,11 @@ bool isPawn(PieceValueType value) {
     return (value & kPieceTypeMask) == 0x1;
 }
 
+bool isRook(PieceValueType value) {
+    return PieceType(value & kPieceTypeMask) == PieceType::Rook;
+}
+
+
 bool isLastRank(Coordinate destination) {
     return (destination.rank == 0) || (destination.rank == BOARD_SIZE - 1);
 }
@@ -328,8 +333,42 @@ public:
             if (CURRENT_PIECE == 0) {
                 continue;
             }
+            
             if (doesPieceBelongToPlayer(CURRENT_PIECE, player)) {
                 const Coordinate currentCoordinate({FILE, RANK});
+                
+                if (isRook(CURRENT_PIECE)) {
+                    const std::vector<Coordinate> offsets({{1, 0}, {-1, 0}, {0, 1}, {0, -1}});
+                    for (const auto& offset : offsets) {
+                        for (int i = 1; i < BOARD_SIZE; i++) {
+                            const Coordinate destination = currentCoordinate + offset * i;
+                            if (isWithinBoard(destination)) {
+                                const PieceValueType destinationPiece = board[destination.file][destination.rank];
+                                if (destinationPiece == 0) {
+                                    possibleMoves.push_back(
+                                        MoveSimple(currentCoordinate, destination)
+                                    );
+                                    continue;
+                                }
+                                
+                                if (doesPieceBelongToPlayer(destinationPiece, player)) {
+                                    // Stop iterating `i` (range)
+                                    break;
+                                } else {
+                                    // Piece belongs to enemy - move can be added
+                                    possibleMoves.push_back(
+                                        MoveSimple(currentCoordinate, destination)
+                                    );
+                                    break;
+                                }
+                            } else {
+                                // Stop iterating `i` (range)
+                                break;
+                            }
+                        }
+                    }
+                }
+                
                 // Process regular pawn, knight and king moves
                 for (const auto& offset : possibleMoveTargetsForPieceValue(CURRENT_PIECE)) {
                     const Coordinate destination = currentCoordinate + offset;
@@ -344,7 +383,6 @@ public:
                             continue;
                         }
                                                 
-                        // Pawn logic
                         if (isPawn(CURRENT_PIECE)) {
                             // Pawn can't move forward if square is not empty
                             if (destinationPiece != 0) {

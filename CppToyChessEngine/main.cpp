@@ -29,5 +29,28 @@ int main(int argc, const char * argv[]) {
         std::cout << move << "\n";
     }
     
+    // Show rook moves
+    std::string gameString = R"(
+________
+________
+________
+________
+_p______
+________
+pR____p_
+_q______
+)";
+    
+    ChessGame rookGame = ChessGame(gameString);
+    
+    // Check moves
+    std::vector<Move> whiteMoves = rookGame.possibleMovesForPlayer(0);
+    std::cout << rookGame.asString() << "\n";
+    std::cout << "Possible moves for white:\n";
+    for (auto move : whiteMoves) {
+        std::cout << move << "\n";
+    }
+    
+    
     return 0;
 }
