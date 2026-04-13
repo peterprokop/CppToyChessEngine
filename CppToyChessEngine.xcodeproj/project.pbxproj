@@ -22,28 +22,23 @@
 		D23009602F87B01E004E918E /* CppToyChessEngine */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CppToyChessEngine; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		D2CF07D02F8A49D800BB3DC7 /* Exceptions for "CppToyChessEngineTests" folder in "Compile Sources" phase from "CppToyChessEngine" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = D230095C2F87B01E004E918E /* Sources */;
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D276231E2F8BF51F00068E42 /* Exceptions for "CppToyChessEngine" folder in "CppToyChessEngine" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				CMakeLists.txt,
+				ChessTests.cpp,
 			);
+			target = D230095F2F87B01E004E918E /* CppToyChessEngine */;
 		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D23009622F87B01E004E918E /* CppToyChessEngine */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = CppToyChessEngine;
-			sourceTree = "<group>";
-		};
-		D2CF07CC2F8A49B600BB3DC7 /* CppToyChessEngineTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				D2CF07D02F8A49D800BB3DC7 /* Exceptions for "CppToyChessEngineTests" folder in "Compile Sources" phase from "CppToyChessEngine" target */,
+				D276231E2F8BF51F00068E42 /* Exceptions for "CppToyChessEngine" folder in "CppToyChessEngine" target */,
 			);
-			path = CppToyChessEngineTests;
+			path = CppToyChessEngine;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -62,7 +57,6 @@
 		D23009572F87B01E004E918E = {
 			isa = PBXGroup;
 			children = (
-				D2CF07CC2F8A49B600BB3DC7 /* CppToyChessEngineTests */,
 				D23009622F87B01E004E918E /* CppToyChessEngine */,
 				D23009612F87B01E004E918E /* Products */,
 			);
@@ -93,7 +87,6 @@
 			);
 			fileSystemSynchronizedGroups = (
 				D23009622F87B01E004E918E /* CppToyChessEngine */,
-				D2CF07CC2F8A49B600BB3DC7 /* CppToyChessEngineTests */,
 			);
 			name = CppToyChessEngine;
 			packageProductDependencies = (

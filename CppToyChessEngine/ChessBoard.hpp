@@ -30,6 +30,9 @@
 typedef uint16_t PieceValueType;
 
 constexpr uint16_t kPieceTypeMask = 0xF;
+constexpr uint16_t kPlayerMask = 0xF0;
+constexpr uint16_t kBlackPlayerBit = 0b1'0000;
+
 constexpr uint16_t kHasMovedMask = 0xF00;
 constexpr uint16_t kHasMovedBit = 0b1'0000'0000;
 
@@ -104,6 +107,53 @@ char pieceFromValue(PieceValueType value) {
     }
     
     return printablePiece;
+}
+
+PieceValueType pieceValueFromChar(char ch) {
+    if (ch == '_') {
+        return 0;
+    }
+    bool isBlackPlayer = (ch >= 'a') && (ch <= 'z');
+    PieceValueType value = 0;
+    
+    if (!isBlackPlayer) {
+        ch = ch + 'a' - 'A';
+    }
+    
+    using enum PieceType;
+    switch (ch) {
+        case 'p':
+            value = std::__to_underlying(Pawn);
+            break;
+        case 'n':
+            value = std::__to_underlying(Knight);
+            break;
+        case 'b':
+            value = std::__to_underlying(Bishop);
+            break;
+        case 'r':
+            value = std::__to_underlying(Rook);
+            break;
+        case 'q':
+            value = std::__to_underlying(Queen);
+            break;
+        case 'k':
+            value = std::__to_underlying(King);
+            break;
+        default:
+            value = 0;
+            break;
+    }
+    
+    if (isBlackPlayer && value > 0) {
+        value |= kBlackPlayerBit;
+    }
+    
+    return value;
+}
+
+void trimLeadingNewline(std::string &string) {
+    string.erase(0, string.find_first_not_of("\n\r"));
 }
 
 std::vector<Coordinate> possibleMoveTargetsForPieceValue(PieceValueType value) {
@@ -192,6 +242,32 @@ public:
             
             board[i][BOARD_SIZE - 2] = 0x11;
             board[i][BOARD_SIZE - 1] = 0x10 | firstRankPieces[i];
+        }
+    }
+    
+    ChessBoard(std::string boardString) {
+        ITERATE_BOARD({
+            board[FILE][RANK] = 0;
+        });
+        trimLeadingNewline(boardString);
+        
+        int file = 0;
+        int rank = BOARD_SIZE - 1;
+        for(const char& ch : boardString) {
+            if (rank < 0) {
+                break;
+            }
+            if (ch == '\n') {
+                rank--;
+                file = 0;
+                continue;
+            } else if (file >= 8) {
+                file = 0;
+                rank--;
+            }
+
+            board[file][rank] = pieceValueFromChar(ch);
+            file++;
         }
     }
     

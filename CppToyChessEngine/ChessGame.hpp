@@ -12,6 +12,10 @@ public:
         chessBoard = ChessBoard();
     }
     
+    ChessGame(std::string boardString) {
+        chessBoard = ChessBoard(boardString);
+    }
+    
     std::string asString() const {
         return chessBoard.asString();
     }
