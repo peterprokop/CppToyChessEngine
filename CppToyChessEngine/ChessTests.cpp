@@ -106,3 +106,60 @@ ________
     
     EXPECT_EQ(whiteMovesAfterPawnMove, expectedWhiteMovesAfterPawnMove);
 }
+
+TEST(ChessGameTest, RookMoves) {
+    std::string gameString = R"(
+________
+________
+________
+________
+_p______
+________
+pR____p_
+_q______
+)";
+    
+    ChessGame game = ChessGame(gameString);
+    
+    // Check moves
+    std::vector<Move> whiteMoves = game.possibleMovesForPlayer(0);
+    
+    // Expected moves:
+    //    b2 -> c2
+    //    b2 -> d2
+    //    b2 -> e2
+    //    b2 -> f2
+    //    b2 -> g2
+    //    b2 -> a2
+    //    b2 -> b3
+    //    b2 -> b4
+    //    b2 -> b1
+    std::vector<Move> expectedWhiteMoves{
+        MoveSimple({1,1}, {2,1}),
+        MoveSimple({1,1}, {3,1}),
+        MoveSimple({1,1}, {4,1}),
+        MoveSimple({1,1}, {5,1}),
+        MoveSimple({1,1}, {6,1}),
+        MoveSimple({1,1}, {0,1}),
+        MoveSimple({1,1}, {1,2}),
+        MoveSimple({1,1}, {1,3}),
+        MoveSimple({1,1}, {1,0}),
+    };
+    
+    EXPECT_EQ(whiteMoves.size(), expectedWhiteMoves.size());
+    EXPECT_EQ(whiteMoves, expectedWhiteMoves);
+}
+
+TEST(ChessGameTest, QueenMoves) {
+    // TODO: implement
+    //std::string gameString = R"(
+    //________
+    //________
+    //________
+    //________
+    //___p____
+    //pp______
+    //_Q_p____
+    //p_______
+    //)";
+}

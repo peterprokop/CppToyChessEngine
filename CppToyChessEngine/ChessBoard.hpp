@@ -215,6 +215,23 @@ std::vector<Coordinate> possibleMoveTargetsForPieceValue(PieceValueType value) {
     }
 }
 
+std::vector<Coordinate> moveOffsetsForPieceType(PieceType pieceType) {
+#define kRookOffsets {1, 0}, {-1, 0}, {0, 1}, {0, -1}
+#define kBishopOffsets {1, 1}, {-1, 1}, {1, -1}, {-1, -1}
+    
+    using enum PieceType;
+    switch (pieceType) {
+        case Bishop:
+            return {kBishopOffsets};
+        case Rook:
+            return {kRookOffsets};
+        case Queen:
+            return {kRookOffsets, kBishopOffsets};
+        default:
+            return {};
+    }
+}
+
 class ChessBoard {
 private:
     // 1st index - file, 2nd - rank
@@ -336,9 +353,11 @@ public:
             
             if (doesPieceBelongToPlayer(CURRENT_PIECE, player)) {
                 const Coordinate currentCoordinate({FILE, RANK});
-                
-                if (isRook(CURRENT_PIECE)) {
-                    const std::vector<Coordinate> offsets({{1, 0}, {-1, 0}, {0, 1}, {0, -1}});
+                PieceType pieceType = PieceType(CURRENT_PIECE & kPieceTypeMask);
+                using enum PieceType;
+                if (pieceType == Bishop || pieceType == Rook || pieceType == Queen) {
+                    const std::vector<Coordinate> offsets = moveOffsetsForPieceType(pieceType);
+                    
                     for (const auto& offset : offsets) {
                         for (int i = 1; i < BOARD_SIZE; i++) {
                             const Coordinate destination = currentCoordinate + offset * i;
@@ -348,19 +367,18 @@ public:
                                     possibleMoves.push_back(
                                         MoveSimple(currentCoordinate, destination)
                                     );
+                                    // Continue iterating `i` (range)
                                     continue;
                                 }
                                 
-                                if (doesPieceBelongToPlayer(destinationPiece, player)) {
-                                    // Stop iterating `i` (range)
-                                    break;
-                                } else {
-                                    // Piece belongs to enemy - move can be added
+                                if (!doesPieceBelongToPlayer(destinationPiece, player)) {
+                                    // Piece belongs to opponent - move can be added
                                     possibleMoves.push_back(
                                         MoveSimple(currentCoordinate, destination)
                                     );
-                                    break;
                                 }
+                                // Stop iterating `i` (range)
+                                break;
                             } else {
                                 // Stop iterating `i` (range)
                                 break;
@@ -413,7 +431,7 @@ public:
                     }
                 }
             }
-        })
+        });
         
         // TODO: check if castling is possible
         // if !(king has moved) && !(rook1 has moved) && (rook, king on same rank)
