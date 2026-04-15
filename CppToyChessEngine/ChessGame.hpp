@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vector>
-
 #include "ChessBoard.hpp"
+
+#include <vector>
 
 class ChessGame {
 private:

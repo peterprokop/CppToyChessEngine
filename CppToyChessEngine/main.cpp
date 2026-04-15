@@ -1,6 +1,6 @@
-#include <iostream>
-
 #include "ChessGame.hpp"
+
+#include <iostream>
 
 int main(int argc, const char * argv[]) {
     ChessGame game = ChessGame();

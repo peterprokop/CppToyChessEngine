@@ -1,11 +1,9 @@
 #pragma once
 
-#include <iostream>
-#include <sstream>
-#include <algorithm>
-#include <iterator>
-
 #include "Coordinate.hpp"
+
+#include <vector>
+#include <sstream>
 
 /*
  Every piece is encoded by 16 bits
@@ -128,22 +126,22 @@ PieceValueType pieceValueFromChar(char ch) {
     using enum PieceType;
     switch (ch) {
         case 'p':
-            value = std::__to_underlying(Pawn);
+            value = std::to_underlying(Pawn);
             break;
         case 'n':
-            value = std::__to_underlying(Knight);
+            value = std::to_underlying(Knight);
             break;
         case 'b':
-            value = std::__to_underlying(Bishop);
+            value = std::to_underlying(Bishop);
             break;
         case 'r':
-            value = std::__to_underlying(Rook);
+            value = std::to_underlying(Rook);
             break;
         case 'q':
-            value = std::__to_underlying(Queen);
+            value = std::to_underlying(Queen);
             break;
         case 'k':
-            value = std::__to_underlying(King);
+            value = std::to_underlying(King);
             break;
         default:
             value = 0;
@@ -334,7 +332,7 @@ public:
         PieceValueType pieceValue = newBoard.board[coordinate.file][coordinate.rank];
         
         newBoard.board[coordinate.file][coordinate.rank] =
-            (pieceValue & ~0xF) | (std::__to_underlying(pieceType) & 0xF);
+            (pieceValue & ~0xF) | (std::to_underlying(pieceType) & 0xF);
         
         return newBoard;
     }
@@ -409,7 +407,7 @@ public:
                             // TODO: Handle pawn promotion when capturing piece
                             // Handle pawn promotion
                             if (isLastRank(destination)) {
-                                std::for_each(
+                                std::ranges::for_each(
                                   kPawnPromotionOptions.begin(),
                                   kPawnPromotionOptions.end(),
                                   [&](PieceType pieceType)

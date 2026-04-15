@@ -1,9 +1,10 @@
 #pragma once
 
+#include "PieceType.hpp"
+
 #include <variant>
 #include <type_traits>
-
-#include "PieceType.hpp"
+#include <iostream>
 
 struct Coordinate {
     friend std::ostream& operator<<(std::ostream&, const Coordinate&);
