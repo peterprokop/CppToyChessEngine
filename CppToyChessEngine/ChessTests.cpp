@@ -150,16 +150,123 @@ _q______
     EXPECT_EQ(whiteMoves, expectedWhiteMoves);
 }
 
-TEST(ChessGameTest, QueenMoves) {
-    // TODO: implement
-    //std::string gameString = R"(
-    //________
-    //________
-    //________
-    //________
-    //___p____
-    //pp______
-    //_Q_p____
-    //p_______
-    //)";
+bool operator<(const Coordinate& left, const Coordinate& right) {
+    if (left.file < right.file) {
+        return true;
+    } else if (left.file < right.file) {
+        return left.rank < right.rank;
+    }
+    
+    return false;
+}
+
+bool operator<(const MoveSimple& left, const MoveSimple& right) {
+    if (left.source < right.source) {
+        return true;
+    } else if (left.source == right.source) {
+        return left.destination < right.destination;
+    }
+    
+    return false;
+}
+
+bool operator<(const MoveCastling& left, const MoveCastling& right) {
+    if (left.type < right.type) {
+        return true;
+    } else if (left.type == right.type) {
+        if (left.kingsMove < right.kingsMove) {
+            return true;
+        } else if (left.kingsMove == right.kingsMove) {
+            return left.rooksMove < right.rooksMove;
+        }
+    }
+    
+    return false;
+}
+
+bool operator<(const MovePawnPromotion& left, const MovePawnPromotion& right) {
+    if (left.promoteTo < right.promoteTo) {
+        return true;
+    } else if (left.promoteTo == right.promoteTo) {
+        return left.pawnsMove < right.pawnsMove;
+    }
+    
+    return false;
+}
+
+TEST(ChessGameTest, QueenMovesEmptyBoard) {
+    std::string gameString = R"(
+________
+________
+________
+________
+________
+________
+________
+Q_______
+)";
+    
+    ChessGame game = ChessGame(gameString);
+
+    std::vector<Move> whiteMoves = game.possibleMovesForPlayer(0);
+    Coordinate source{0, 0};
+    std::set<Move> expectedWhiteMovesSet{
+        MoveSimple(source, {0,1}),
+        MoveSimple(source, {0,2}),
+        MoveSimple(source, {0,3}),
+        MoveSimple(source, {0,4}),
+        MoveSimple(source, {0,5}),
+        MoveSimple(source, {0,6}),
+        MoveSimple(source, {0,7}),
+        
+        MoveSimple(source, {1,0}),
+        MoveSimple(source, {2,0}),
+        MoveSimple(source, {3,0}),
+        MoveSimple(source, {4,0}),
+        MoveSimple(source, {5,0}),
+        MoveSimple(source, {6,0}),
+        MoveSimple(source, {7,0}),
+        
+        MoveSimple(source, {1,1}),
+        MoveSimple(source, {2,2}),
+        MoveSimple(source, {3,3}),
+        MoveSimple(source, {4,4}),
+        MoveSimple(source, {5,5}),
+        MoveSimple(source, {6,6}),
+        MoveSimple(source, {7,7}),
+    };
+    
+    std::set<Move> whiteMovesSet(whiteMoves.begin(), whiteMoves.end());
+    // If board is empty, then number of possible moves is always 3 * (board_size - 1)
+    EXPECT_EQ(whiteMoves.size(), 3 * 7);
+    
+    EXPECT_EQ(whiteMovesSet, expectedWhiteMovesSet);
+}
+
+TEST(ChessGameTest, QueenMovesBlockedByEnemy) {
+    std::string gameString = R"(
+________
+________
+________
+________
+________
+________
+nn______
+Qn______
+)";
+    
+    ChessGame game = ChessGame(gameString);
+
+    std::vector<Move> whiteMoves = game.possibleMovesForPlayer(0);
+    Coordinate source{0, 0};
+    std::set<Move> expectedWhiteMovesSet{
+        MoveSimple(source, {0,1}),
+        MoveSimple(source, {1,0}),
+        MoveSimple(source, {1,1}),
+    };
+    
+    std::set<Move> whiteMovesSet(whiteMoves.begin(), whiteMoves.end());
+    EXPECT_EQ(whiteMoves.size(), 3);
+    
+    EXPECT_EQ(whiteMovesSet, expectedWhiteMovesSet);
 }
