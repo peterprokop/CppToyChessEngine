@@ -10,6 +10,7 @@ add_executable(
   PieceType.cpp
   Move.cpp
   Coordinate.cpp
+  ChessBoardHelpers.cpp
 )
 
 # Gtest stuff is from https://google.github.io/googletest/quickstart-cmake.html
@@ -30,6 +31,7 @@ add_executable(
   PieceType.cpp
   Move.cpp
   Coordinate.cpp
+  ChessBoardHelpers.cpp
 )
 target_link_libraries(
   chess_tests
