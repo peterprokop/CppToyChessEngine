@@ -17,14 +17,6 @@ constexpr std::array<PieceType, 4> kPawnPromotionOptions {
 const std::vector<PieceValueType> firstRankPieces =
     {4, 2, 3, 5, 6, 3, 2, 4};
 
-#define ITERATE_BOARD(CODE) \
-for (int16_t RANK = BOARD_SIZE - 1; RANK >= 0; RANK--) {\
-    for (int16_t FILE = 0; FILE < BOARD_SIZE; FILE++) {\
-        const auto CURRENT_PIECE = board[FILE][RANK];\
-        CODE\
-    } \
-}
-
 class ChessBoard {
 private:
     // 1st index - file, 2nd - rank
@@ -81,6 +73,55 @@ private:
                 } else {
                     // Stop iterating `i` (range)
                     break;
+                }
+            }
+        }
+        
+        return possibleMoves;
+    }
+    
+    std::vector<Move> possibleMovesForNonRaycaster(Coordinate currentCoordinate,
+                                                   PieceValueType currentPiece,
+                                                   uint8_t player) const {
+        std::vector<Move> possibleMoves{};
+        for (const auto& offset : possibleMoveTargetsForPieceValue(currentPiece)) {
+            const Coordinate destination = currentCoordinate + offset;
+            if (isWithinBoard(destination)) {
+                // TODO: check if destination is blocked (for all pieces)
+                // TODO: check if move generates check for own king
+                // TODO: add moves for pawn capture
+                // TODO: add moves for en passant capture
+                const PieceValueType destinationPiece = board[destination.file][destination.rank];
+                if (destinationPiece > 0 && doesPieceBelongToPlayer(destinationPiece, player)) {
+                    continue;
+                }
+                                        
+                if (isPawn(currentPiece)) {
+                    // Pawn can't move forward if square is not empty
+                    if (destinationPiece != 0) {
+                        continue;
+                    }
+                    // TODO: Handle pawn promotion when capturing piece
+                    // Handle pawn promotion
+                    if (isLastRank(destination)) {
+                        std::ranges::for_each(
+                          kPawnPromotionOptions.begin(),
+                          kPawnPromotionOptions.end(),
+                          [&](PieceType pieceType)
+                          {
+                              possibleMoves.push_back(MovePawnPromotion({
+                                  pieceType,
+                                  MoveSimple(currentCoordinate, destination)
+                              }));
+                          }
+                      );
+                    } else {
+                        // No promotion
+                        possibleMoves.push_back(MoveSimple(currentCoordinate, destination));
+                    }
+                } else {
+                    // Non-pawn logic
+                    possibleMoves.push_back(MoveSimple(currentCoordinate, destination));
                 }
             }
         }
@@ -173,67 +214,32 @@ public:
      */
     std::vector<Move> possibleMovesForPlayer(uint8_t player) {
         std::vector<Move> possibleMoves{};
-        ITERATE_BOARD({
-            if (CURRENT_PIECE == 0) {
-                continue;
-            }
-            
-            if (!doesPieceBelongToPlayer(CURRENT_PIECE, player)) {
-                continue;
-            }
-            
-            const Coordinate currentCoordinate({FILE, RANK});
-            PieceType pieceType = PieceType(CURRENT_PIECE & kPieceTypeMask);
-            using enum PieceType;
-            if (pieceType == Bishop || pieceType == Rook || pieceType == Queen) {
-                const auto movesToAdd = possibleMovesForRaycaster(currentCoordinate, pieceType, player);
-                possibleMoves.append_range(movesToAdd);
-            }
-            
-            // Process regular pawn, knight and king moves
-            for (const auto& offset : possibleMoveTargetsForPieceValue(CURRENT_PIECE)) {
-                const Coordinate destination = currentCoordinate + offset;
-                if (isWithinBoard(destination)) {
-                    // TODO: check if destination is blocked (for all pieces)
-                    // TODO: check if move generates check for own king
-                    // TODO: add moves for pawn capture
-                    // TODO: add moves for en passant capture
-                    // TODO: add moves for castling
-                    const PieceValueType destinationPiece = board[destination.file][destination.rank];
-                    if (destinationPiece > 0 && doesPieceBelongToPlayer(destinationPiece, player)) {
-                        continue;
-                    }
-                                            
-                    if (isPawn(CURRENT_PIECE)) {
-                        // Pawn can't move forward if square is not empty
-                        if (destinationPiece != 0) {
-                            continue;
-                        }
-                        // TODO: Handle pawn promotion when capturing piece
-                        // Handle pawn promotion
-                        if (isLastRank(destination)) {
-                            std::ranges::for_each(
-                              kPawnPromotionOptions.begin(),
-                              kPawnPromotionOptions.end(),
-                              [&](PieceType pieceType)
-                              {
-                                  possibleMoves.push_back(MovePawnPromotion({
-                                      pieceType,
-                                      MoveSimple(currentCoordinate, destination)
-                                  }));
-                              }
-                          );
-                        } else {
-                            // No promotion
-                            possibleMoves.push_back(MoveSimple(currentCoordinate, destination));
-                        }
-                    } else {
-                        // Non-pawn logic
-                        possibleMoves.push_back(MoveSimple(currentCoordinate, destination));
-                    }
+        
+        for (int16_t RANK = BOARD_SIZE - 1; RANK >= 0; RANK--) {
+            for (int16_t FILE = 0; FILE < BOARD_SIZE; FILE++) {
+                const auto CURRENT_PIECE = board[FILE][RANK];
+
+                if (CURRENT_PIECE == 0) {
+                    continue;
+                }
+                
+                if (!doesPieceBelongToPlayer(CURRENT_PIECE, player)) {
+                    continue;
+                }
+                
+                const Coordinate currentCoordinate({FILE, RANK});
+                PieceType pieceType = PieceType(CURRENT_PIECE & kPieceTypeMask);
+                using enum PieceType;
+                if (pieceType == Bishop || pieceType == Rook || pieceType == Queen) {
+                    const auto movesToAdd = possibleMovesForRaycaster(currentCoordinate, pieceType, player);
+                    possibleMoves.append_range(movesToAdd);
+                } else {
+                    // Process regular pawn, knight and king moves
+                    const auto movesToAdd = possibleMovesForNonRaycaster(currentCoordinate, CURRENT_PIECE, player);
+                    possibleMoves.append_range(movesToAdd);
                 }
             }
-        });
+        }
         
         // TODO: check if castling is possible
         // if !(king has moved) && !(rook1 has moved) && (rook, king on same rank)
