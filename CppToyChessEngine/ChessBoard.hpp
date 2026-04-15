@@ -44,11 +44,48 @@ private:
         }
     }
     
-    bool isWithinBoard(Coordinate coordinate) {
+    bool isWithinBoard(Coordinate coordinate) const {
         return coordinate.file >= 0
             && coordinate.file < BOARD_SIZE
             && coordinate.rank >= 0
             && coordinate.rank < BOARD_SIZE;
+    }
+    
+    std::vector<Move> possibleMovesForRaycaster(Coordinate currentCoordinate,
+                                                PieceType pieceType,
+                                                uint8_t player) const {
+        std::vector<Move> possibleMoves{};
+        const std::vector<Coordinate> offsets = moveOffsetsForPieceType(pieceType);
+        
+        for (const auto& offset : offsets) {
+            for (int i = 1; i < BOARD_SIZE; i++) {
+                const Coordinate destination = currentCoordinate + offset * i;
+                if (isWithinBoard(destination)) {
+                    const PieceValueType destinationPiece = board[destination.file][destination.rank];
+                    if (destinationPiece == 0) {
+                        possibleMoves.push_back(
+                            MoveSimple(currentCoordinate, destination)
+                        );
+                        // Continue iterating `i` (range)
+                        continue;
+                    }
+                    
+                    if (!doesPieceBelongToPlayer(destinationPiece, player)) {
+                        // Piece belongs to opponent - move can be added
+                        possibleMoves.push_back(
+                            MoveSimple(currentCoordinate, destination)
+                        );
+                    }
+                    // Stop iterating `i` (range)
+                    break;
+                } else {
+                    // Stop iterating `i` (range)
+                    break;
+                }
+            }
+        }
+        
+        return possibleMoves;
     }
     
 public:
@@ -141,83 +178,58 @@ public:
                 continue;
             }
             
-            if (doesPieceBelongToPlayer(CURRENT_PIECE, player)) {
-                const Coordinate currentCoordinate({FILE, RANK});
-                PieceType pieceType = PieceType(CURRENT_PIECE & kPieceTypeMask);
-                using enum PieceType;
-                if (pieceType == Bishop || pieceType == Rook || pieceType == Queen) {
-                    const std::vector<Coordinate> offsets = moveOffsetsForPieceType(pieceType);
-                    
-                    for (const auto& offset : offsets) {
-                        for (int i = 1; i < BOARD_SIZE; i++) {
-                            const Coordinate destination = currentCoordinate + offset * i;
-                            if (isWithinBoard(destination)) {
-                                const PieceValueType destinationPiece = board[destination.file][destination.rank];
-                                if (destinationPiece == 0) {
-                                    possibleMoves.push_back(
-                                        MoveSimple(currentCoordinate, destination)
-                                    );
-                                    // Continue iterating `i` (range)
-                                    continue;
-                                }
-                                
-                                if (!doesPieceBelongToPlayer(destinationPiece, player)) {
-                                    // Piece belongs to opponent - move can be added
-                                    possibleMoves.push_back(
-                                        MoveSimple(currentCoordinate, destination)
-                                    );
-                                }
-                                // Stop iterating `i` (range)
-                                break;
-                            } else {
-                                // Stop iterating `i` (range)
-                                break;
-                            }
-                        }
+            if (!doesPieceBelongToPlayer(CURRENT_PIECE, player)) {
+                continue;
+            }
+            
+            const Coordinate currentCoordinate({FILE, RANK});
+            PieceType pieceType = PieceType(CURRENT_PIECE & kPieceTypeMask);
+            using enum PieceType;
+            if (pieceType == Bishop || pieceType == Rook || pieceType == Queen) {
+                const auto movesToAdd = possibleMovesForRaycaster(currentCoordinate, pieceType, player);
+                possibleMoves.append_range(movesToAdd);
+            }
+            
+            // Process regular pawn, knight and king moves
+            for (const auto& offset : possibleMoveTargetsForPieceValue(CURRENT_PIECE)) {
+                const Coordinate destination = currentCoordinate + offset;
+                if (isWithinBoard(destination)) {
+                    // TODO: check if destination is blocked (for all pieces)
+                    // TODO: check if move generates check for own king
+                    // TODO: add moves for pawn capture
+                    // TODO: add moves for en passant capture
+                    // TODO: add moves for castling
+                    const PieceValueType destinationPiece = board[destination.file][destination.rank];
+                    if (destinationPiece > 0 && doesPieceBelongToPlayer(destinationPiece, player)) {
+                        continue;
                     }
-                }
-                
-                // Process regular pawn, knight and king moves
-                for (const auto& offset : possibleMoveTargetsForPieceValue(CURRENT_PIECE)) {
-                    const Coordinate destination = currentCoordinate + offset;
-                    if (isWithinBoard(destination)) {
-                        // TODO: check if destination is blocked (for all pieces)
-                        // TODO: check if move generates check for own king
-                        // TODO: add moves for pawn capture
-                        // TODO: add moves for en passant capture
-                        // TODO: add moves for castling
-                        const PieceValueType destinationPiece = board[destination.file][destination.rank];
-                        if (destinationPiece > 0 && doesPieceBelongToPlayer(destinationPiece, player)) {
+                                            
+                    if (isPawn(CURRENT_PIECE)) {
+                        // Pawn can't move forward if square is not empty
+                        if (destinationPiece != 0) {
                             continue;
                         }
-                                                
-                        if (isPawn(CURRENT_PIECE)) {
-                            // Pawn can't move forward if square is not empty
-                            if (destinationPiece != 0) {
-                                continue;
-                            }
-                            // TODO: Handle pawn promotion when capturing piece
-                            // Handle pawn promotion
-                            if (isLastRank(destination)) {
-                                std::ranges::for_each(
-                                  kPawnPromotionOptions.begin(),
-                                  kPawnPromotionOptions.end(),
-                                  [&](PieceType pieceType)
-                                  {
-                                      possibleMoves.push_back(MovePawnPromotion({
-                                          pieceType,
-                                          MoveSimple(currentCoordinate, destination)
-                                      }));
-                                  }
-                              );
-                            } else {
-                                // No promotion
-                                possibleMoves.push_back(MoveSimple(currentCoordinate, destination));
-                            }
+                        // TODO: Handle pawn promotion when capturing piece
+                        // Handle pawn promotion
+                        if (isLastRank(destination)) {
+                            std::ranges::for_each(
+                              kPawnPromotionOptions.begin(),
+                              kPawnPromotionOptions.end(),
+                              [&](PieceType pieceType)
+                              {
+                                  possibleMoves.push_back(MovePawnPromotion({
+                                      pieceType,
+                                      MoveSimple(currentCoordinate, destination)
+                                  }));
+                              }
+                          );
                         } else {
-                            // Non-pawn logic
+                            // No promotion
                             possibleMoves.push_back(MoveSimple(currentCoordinate, destination));
                         }
+                    } else {
+                        // Non-pawn logic
+                        possibleMoves.push_back(MoveSimple(currentCoordinate, destination));
                     }
                 }
             }
