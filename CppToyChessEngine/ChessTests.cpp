@@ -270,3 +270,61 @@ Qn______
     
     EXPECT_EQ(whiteMovesSet, expectedWhiteMovesSet);
 }
+
+TEST(ChessGameTest, BishopMovesEmptyBoard) {
+    std::string gameString = R"(
+________
+________
+________
+________
+________
+________
+________
+B_______
+)";
+    
+    ChessGame game = ChessGame(gameString);
+
+    std::vector<Move> whiteMoves = game.possibleMovesForPlayer(0);
+    Coordinate source{0, 0};
+    std::set<Move> expectedWhiteMovesSet{
+        MoveSimple(source, {1,1}),
+        MoveSimple(source, {2,2}),
+        MoveSimple(source, {3,3}),
+        MoveSimple(source, {4,4}),
+        MoveSimple(source, {5,5}),
+        MoveSimple(source, {6,6}),
+        MoveSimple(source, {7,7}),
+    };
+    
+    std::set<Move> whiteMovesSet(whiteMoves.begin(), whiteMoves.end());
+    EXPECT_EQ(whiteMoves.size(), 7);
+    
+    EXPECT_EQ(whiteMovesSet, expectedWhiteMovesSet);
+}
+
+TEST(ChessGameTest, BishopMovesBlockedByEnemy) {
+    std::string gameString = R"(
+________
+________
+________
+________
+________
+________
+_n______
+B_______
+)";
+    
+    ChessGame game = ChessGame(gameString);
+
+    std::vector<Move> whiteMoves = game.possibleMovesForPlayer(0);
+    Coordinate source{0, 0};
+    std::set<Move> expectedWhiteMovesSet{
+        MoveSimple(source, {1,1}),
+    };
+    
+    std::set<Move> whiteMovesSet(whiteMoves.begin(), whiteMoves.end());
+    EXPECT_EQ(whiteMoves.size(), 1);
+    
+    EXPECT_EQ(whiteMovesSet, expectedWhiteMovesSet);
+}

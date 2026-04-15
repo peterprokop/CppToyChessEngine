@@ -14,7 +14,7 @@ constexpr std::array<PieceType, 4> kPawnPromotionOptions {
     PieceType::Queen,
 };
 
-const std::vector<PieceValueType> firstRankPieces =
+constexpr std::array<PieceValueType, BOARD_SIZE> firstRankPieces =
     {4, 2, 3, 5, 6, 3, 2, 4};
 
 class ChessBoard {
@@ -139,8 +139,8 @@ public:
                 board[i][j] = 0;
             }
             
-            board[i][BOARD_SIZE - 2] = 0x11;
-            board[i][BOARD_SIZE - 1] = 0x10 | firstRankPieces[i];
+            board[i][BOARD_SIZE - 2] = kBlackPlayerBit | 0x1; // Pawn
+            board[i][BOARD_SIZE - 1] = kBlackPlayerBit | firstRankPieces[i]; // Same pieces, but black color
         }
     }
     
