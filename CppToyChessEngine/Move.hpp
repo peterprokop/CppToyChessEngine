@@ -1,3 +1,4 @@
+#pragma once
 #include <variant>
 
 #include "Coordinate.hpp"
@@ -10,14 +11,8 @@ struct MoveSimple {
     Coordinate destination;
 };
 
-std::ostream & operator << (std::ostream &outs, const MoveSimple &move) {
-    return outs << move.source << " -> " << move.destination;
-}
-
-bool operator==(const MoveSimple& left, const MoveSimple& right) {
-    return left.source == right.source
-    && left.destination == right.destination;
-}
+std::ostream& operator<<(std::ostream &outs, const MoveSimple &move);
+bool operator==(const MoveSimple& left, const MoveSimple& right);
 
 enum class MoveCastlingType {
     KingSide,
@@ -32,11 +27,7 @@ struct MoveCastling {
     MoveSimple rooksMove;
 };
 
-bool operator==(const MoveCastling& left, const MoveCastling& right) {
-    return left.type == right.type
-    && left.kingsMove == right.kingsMove
-    && left.rooksMove == right.rooksMove;
-}
+bool operator==(const MoveCastling& left, const MoveCastling& right);
 
 struct MovePawnPromotion {
     friend bool operator==(const MovePawnPromotion&, const MovePawnPromotion&);
@@ -45,31 +36,8 @@ struct MovePawnPromotion {
     MoveSimple pawnsMove;
 };
 
-bool operator==(const MovePawnPromotion& left, const MovePawnPromotion& right) {
-    return left.promoteTo == right.promoteTo
-    && left.pawnsMove == right.pawnsMove;
-}
+bool operator==(const MovePawnPromotion& left, const MovePawnPromotion& right);
 
 typedef std::variant<MoveSimple, MoveCastling, MovePawnPromotion> Move;
 
-std::ostream & operator << (std::ostream &outs, const Move &move) {
-    std::visit([&](auto&& arg)
-    {
-        using T = std::decay_t<decltype(arg)>;
-        
-        if constexpr (std::is_same_v<T, MoveSimple>) {
-            outs << arg.source << " -> " << arg.destination;
-        } else if constexpr (std::is_same_v<T, MoveCastling>) {
-            outs << ((arg.type == MoveCastlingType::KingSide)
-                ? "0-0"
-                : "0-0-0");
-        } else if constexpr (std::is_same_v<T, MovePawnPromotion>) {
-            outs << arg.pawnsMove.source << " -> " << arg.pawnsMove.destination
-                << algebraicNotationForPieceType(arg.promoteTo);
-        } else {
-            static_assert(false, "non-exhaustive visitor");
-        }
-    }, move);
-    
-    return outs;
-}
+std::ostream & operator << (std::ostream &outs, const Move &move);

@@ -8,6 +8,8 @@ add_executable(
   chess
   main.cpp
   PieceType.cpp
+  Move.cpp
+  Coordinate.cpp
 )
 
 # Gtest stuff is from https://google.github.io/googletest/quickstart-cmake.html
@@ -26,6 +28,8 @@ add_executable(
   chess_tests
   ChessTests.cpp
   PieceType.cpp
+  Move.cpp
+  Coordinate.cpp
 )
 target_link_libraries(
   chess_tests
