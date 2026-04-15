@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Coordinate.hpp"
+#include "Move.hpp"
 
 #include <vector>
 #include <sstream>

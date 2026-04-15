@@ -11,20 +11,4 @@ enum class PieceType: uint8_t {
     King = 0x6,
 };
 
-char algebraicNotationForPieceType(PieceType pieceType) {
-    using enum PieceType;
-    switch (pieceType) {
-        case Pawn:
-            return 'P';
-        case Knight:
-            return 'N';
-        case Bishop:
-            return 'B';
-        case Rook:
-            return 'R';
-        case Queen:
-            return 'Q';
-        case King:
-            return 'K';
-    }
-}
+char algebraicNotationForPieceType(PieceType pieceType);
