@@ -4,7 +4,11 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 project(CppToyChessEngine)
-add_executable(chess main.cpp)
+add_executable(
+  chess
+  main.cpp
+  PieceType.cpp
+)
 
 # Gtest stuff is from https://google.github.io/googletest/quickstart-cmake.html
 include(FetchContent)
@@ -21,6 +25,7 @@ enable_testing()
 add_executable(
   chess_tests
   ChessTests.cpp
+  PieceType.cpp
 )
 target_link_libraries(
   chess_tests
