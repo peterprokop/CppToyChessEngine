@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ChessBoard.hpp"
+#include "ChessBoard.h"
 
 #include <vector>
 

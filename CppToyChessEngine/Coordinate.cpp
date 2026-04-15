@@ -1,20 +1,4 @@
-#pragma once
-
-#include "PieceType.hpp"
-
-#include <variant>
-#include <type_traits>
-#include <iostream>
-
-struct Coordinate {
-    friend std::ostream& operator<<(std::ostream&, const Coordinate&);
-    friend bool operator==(const Coordinate&, const Coordinate&);
-    friend Coordinate operator*(const Coordinate&, const int);
-    
-    int16_t file;
-    int16_t rank;
-};
-
+#include "Coordinate.h"
 
 std::ostream & operator << (std::ostream &outs, const Coordinate &coordinate) {
     return outs << (char)('a' + coordinate.file) << (coordinate.rank + 1);
@@ -39,14 +23,6 @@ Coordinate operator +(const Coordinate& x, const Coordinate& y) {
     };
 }
 
-struct MoveSimple {
-    friend std::ostream& operator<<(std::ostream&, const MoveSimple&);
-    friend bool operator==(const MoveSimple&, const MoveSimple&);
-    
-    Coordinate source;
-    Coordinate destination;
-};
-
 std::ostream & operator << (std::ostream &outs, const MoveSimple &move) {
     return outs << move.source << " -> " << move.destination;
 }
@@ -56,38 +32,16 @@ bool operator==(const MoveSimple& left, const MoveSimple& right) {
     && left.destination == right.destination;
 }
 
-enum class MoveCastlingType {
-    KingSide,
-    QueenSide
-};
-
-struct MoveCastling {
-    friend bool operator==(const MoveCastling&, const MoveCastling&);
-    
-    MoveCastlingType type;
-    MoveSimple kingsMove;
-    MoveSimple rooksMove;
-};
-
 bool operator==(const MoveCastling& left, const MoveCastling& right) {
     return left.type == right.type
     && left.kingsMove == right.kingsMove
     && left.rooksMove == right.rooksMove;
 }
 
-struct MovePawnPromotion {
-    friend bool operator==(const MovePawnPromotion&, const MovePawnPromotion&);
-    
-    PieceType promoteTo;
-    MoveSimple pawnsMove;
-};
-
 bool operator==(const MovePawnPromotion& left, const MovePawnPromotion& right) {
     return left.promoteTo == right.promoteTo
     && left.pawnsMove == right.pawnsMove;
 }
-
-typedef std::variant<MoveSimple, MoveCastling, MovePawnPromotion> Move;
 
 std::ostream & operator << (std::ostream &outs, const Move &move) {
     std::visit([&](auto&& arg)
