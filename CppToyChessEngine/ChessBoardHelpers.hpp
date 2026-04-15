@@ -4,6 +4,8 @@
 #include "PieceType.hpp"
 #include "Coordinate.hpp"
 
+#include <span>
+
 /*
  Every piece is encoded by 16 bits
  
@@ -48,4 +50,4 @@ PieceValueType pieceValueFromChar(char ch);
 void trimLeadingNewline(std::string &string);
 
 std::vector<Coordinate> possibleMoveTargetsForPieceValue(PieceValueType value);
-std::vector<Coordinate> moveOffsetsForPieceType(PieceType pieceType);
+std::span<const Coordinate> moveOffsetsForPieceType(PieceType pieceType);

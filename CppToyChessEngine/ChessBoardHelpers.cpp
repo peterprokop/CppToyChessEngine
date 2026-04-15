@@ -151,18 +151,22 @@ std::vector<Coordinate> possibleMoveTargetsForPieceValue(PieceValueType value) {
     }
 }
 
-std::vector<Coordinate> moveOffsetsForPieceType(PieceType pieceType) {
-#define kRookOffsets {1, 0}, {-1, 0}, {0, 1}, {0, -1}
-#define kBishopOffsets {1, 1}, {-1, 1}, {1, -1}, {-1, -1}
+std::span<const Coordinate> moveOffsetsForPieceType(PieceType pieceType) {
+    constexpr static auto queenOffsets = std::array<Coordinate, 8>{{
+        {1, 0}, {-1, 0}, {0, 1}, {0, -1},
+        {1, 1}, {-1, 1}, {1, -1}, {-1, -1}
+    }};
+    constexpr static auto bishopOffsets = std::span{queenOffsets}.subspan(4);
+    constexpr static auto rookOffsets = std::span{queenOffsets}.subspan(0,4);
     
     using enum PieceType;
     switch (pieceType) {
         case Bishop:
-            return {kBishopOffsets};
+            return bishopOffsets;
         case Rook:
-            return {kRookOffsets};
+            return rookOffsets;
         case Queen:
-            return {kRookOffsets, kBishopOffsets};
+            return queenOffsets;
         default:
             return {};
     }

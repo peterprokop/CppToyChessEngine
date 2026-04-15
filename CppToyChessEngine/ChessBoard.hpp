@@ -47,7 +47,7 @@ private:
                                                 PieceType pieceType,
                                                 uint8_t player) const {
         std::vector<Move> possibleMoves{};
-        const std::vector<Coordinate> offsets = moveOffsetsForPieceType(pieceType);
+        const std::span<const Coordinate> offsets = moveOffsetsForPieceType(pieceType);
         
         for (const auto& offset : offsets) {
             for (int i = 1; i < BOARD_SIZE; i++) {
