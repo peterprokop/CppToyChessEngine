@@ -67,9 +67,6 @@ public:
     }
     
     ChessBoard(std::string boardString) {
-        ITERATE_BOARD({
-            board[FILE][RANK] = 0;
-        });
         trimLeadingNewline(boardString);
         
         int file = 0;
@@ -127,7 +124,7 @@ public:
         PieceValueType pieceValue = newBoard.board[coordinate.file][coordinate.rank];
         
         newBoard.board[coordinate.file][coordinate.rank] =
-            (pieceValue & ~0xF) | (std::to_underlying(pieceType) & 0xF);
+            (pieceValue & ~kPieceTypeMask) | (std::to_underlying(pieceType) & kPieceTypeMask);
         
         return newBoard;
     }

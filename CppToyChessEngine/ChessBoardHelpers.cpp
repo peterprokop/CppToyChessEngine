@@ -131,15 +131,6 @@ std::vector<Coordinate> possibleMoveTargetsForPieceValue(PieceValueType value) {
                 {-2, 1},
                 {-2, -1},
             };
-        case 3:
-            // TODO: bishop
-            return {};
-        case 4:
-            // TODO: rook
-            return {};
-        case 5:
-            // TODO: queen
-            return {};
         case 6:
             // King
             return {
@@ -155,6 +146,7 @@ std::vector<Coordinate> possibleMoveTargetsForPieceValue(PieceValueType value) {
             break;
             
         default:
+            // bishop, rook and queen are handled by different code path
             return {};
     }
 }
