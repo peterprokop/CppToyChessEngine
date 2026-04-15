@@ -12,6 +12,7 @@ add_executable(
   Coordinate.cpp
   ChessBoardHelpers.cpp
   ChessGame.cpp
+  ChessPlayer.cpp
 )
 
 # Gtest stuff is from https://google.github.io/googletest/quickstart-cmake.html
@@ -34,6 +35,7 @@ add_executable(
   Coordinate.cpp
   ChessBoardHelpers.cpp
   ChessGame.cpp
+  ChessPlayer.cpp
 )
 target_link_libraries(
   chess_tests

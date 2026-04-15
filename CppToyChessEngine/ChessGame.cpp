@@ -22,8 +22,10 @@ bool ChessGame::makeMoveMaybe(Move move) {
         if constexpr (std::is_same_v<T, MoveSimple>) {
             this->chessBoard = this->chessBoard.boardByMoving(std::get<MoveSimple>(move));
         } else if constexpr (std::is_same_v<T, MoveCastling>) {
-            // Not implemented yet
-            std::abort();
+            MoveCastling moveCastling = std::get<MoveCastling>(move);
+            this->chessBoard = this->chessBoard
+                .boardByMoving(moveCastling.kingsMove)
+                .boardByMoving(moveCastling.rooksMove);
         } else if constexpr (std::is_same_v<T, MovePawnPromotion>) {
             MovePawnPromotion movePawnPromo = std::get<MovePawnPromotion>(move);
             this->chessBoard = this->chessBoard

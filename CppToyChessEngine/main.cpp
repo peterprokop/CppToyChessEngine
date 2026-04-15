@@ -1,4 +1,5 @@
 #include "ChessGame.hpp"
+#include "ChessPlayer.hpp"
 
 #include <iostream>
 
@@ -51,6 +52,28 @@ _q______
         std::cout << move << "\n";
     }
     
+    // Dummy game with 2 players which make random moves
+    const ChessPlayerRandom p1 = ChessPlayerRandom(0);
+    const ChessPlayerRandom p2 = ChessPlayerRandom(1);
+    std::array<ChessPlayerRandom, 2> players{p1, p2};
+    int currentPlayer = 0;
+    ChessGame newGame = ChessGame();
+    
+    while (true) {
+        auto moves = newGame.possibleMovesForPlayer(currentPlayer);
+        if (moves.size() == 0) {
+            break;
+        }
+        
+        const auto move = players[currentPlayer].makeAMove(moves);
+        
+        newGame.makeMoveMaybe(move);
+        std::cout << "Player " << (currentPlayer + 1) << " move: " << move << "\n";
+        std::cout << newGame.asString() << "\n";
+        
+        currentPlayer++;
+        currentPlayer %= 2;
+    }
     
     return 0;
 }
