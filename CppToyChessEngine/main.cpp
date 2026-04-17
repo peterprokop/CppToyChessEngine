@@ -52,10 +52,12 @@ _q______
         std::cout << move << "\n";
     }
     
-    // Dummy game with 2 players which make random moves
-    const ChessPlayerRandom p1 = ChessPlayerRandom(0);
-    const ChessPlayerRandom p2 = ChessPlayerRandom(1);
-    std::array<ChessPlayerRandom, 2> players{p1, p2};
+    // Dummy game with 2 players which make random moves    
+    const std::array<std::unique_ptr<ChessPlayer>, 2> players = {
+        std::make_unique<ChessPlayerRandom>(ChessPlayerRandom(0)),
+        std::make_unique<ChessPlayerMaxOneLevel>(ChessPlayerMaxOneLevel(1)),
+    };
+    
     int currentPlayer = 0;
     ChessGame newGame = ChessGame();
     
@@ -65,7 +67,7 @@ _q______
             break;
         }
         
-        const auto move = players[currentPlayer].makeAMove(moves);
+        const auto move = players[currentPlayer]->makeAMove(moves, newGame);
         
         newGame.makeMoveMaybe(move);
         std::cout << "Player " << (currentPlayer + 1) << " move: " << move << "\n";

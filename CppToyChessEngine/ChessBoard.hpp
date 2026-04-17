@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <sstream>
+#include <functional>
 
 constexpr std::array<PieceType, 4> kPawnPromotionOptions {
     PieceType::Knight,
@@ -164,6 +165,14 @@ public:
 
             board[file][rank] = pieceValueFromChar(ch);
             file++;
+        }
+    }
+    
+    void iterateBoard(std::function<void(int16_t, int16_t, PieceValueType)> callback) const {
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                callback(i, j, board[i][j]);
+            }
         }
     }
     

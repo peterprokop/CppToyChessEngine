@@ -5,10 +5,11 @@
 #include <vector>
 
 class ChessGame {
-private:
-    ChessBoard chessBoard;
 public:
-    ChessGame();    
+    ChessBoard chessBoard;
+    
+    ChessGame();
+    ChessGame(const ChessGame& game);
     ChessGame(std::string boardString);
     
     std::string asString() const;

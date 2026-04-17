@@ -4,6 +4,10 @@ ChessGame::ChessGame() {
     chessBoard = ChessBoard();
 }
 
+ChessGame::ChessGame(const ChessGame& game) {
+    chessBoard = game.chessBoard;
+}
+
 ChessGame::ChessGame(std::string boardString) {
     chessBoard = ChessBoard(boardString);
 }

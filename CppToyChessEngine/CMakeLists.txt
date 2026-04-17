@@ -13,6 +13,7 @@ add_executable(
   ChessBoardHelpers.cpp
   ChessGame.cpp
   ChessPlayer.cpp
+  MinMaxEval/MinMaxEval.cpp
 )
 
 # Gtest stuff is from https://google.github.io/googletest/quickstart-cmake.html
@@ -36,6 +37,7 @@ add_executable(
   ChessBoardHelpers.cpp
   ChessGame.cpp
   ChessPlayer.cpp
+  MinMaxEval/MinMaxEval.cpp
 )
 target_link_libraries(
   chess_tests
