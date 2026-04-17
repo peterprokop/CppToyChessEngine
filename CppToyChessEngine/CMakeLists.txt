@@ -4,6 +4,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 project(CppToyChessEngine)
+
 add_executable(
   chess
   main.cpp
@@ -15,6 +16,7 @@ add_executable(
   ChessPlayer.cpp
   MinMaxEval/MinMaxEval.cpp
 )
+target_compile_options(chess PUBLIC -std=c++23)
 
 # Gtest stuff is from https://google.github.io/googletest/quickstart-cmake.html
 include(FetchContent)
@@ -39,6 +41,7 @@ add_executable(
   ChessPlayer.cpp
   MinMaxEval/MinMaxEval.cpp
 )
+target_compile_options(chess_tests PUBLIC -std=c++23)
 target_link_libraries(
   chess_tests
   GTest::gtest_main
