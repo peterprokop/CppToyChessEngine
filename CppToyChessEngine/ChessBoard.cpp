@@ -79,6 +79,14 @@ std::vector<Move> ChessBoard::possibleMovesForNonRaycaster(Coordinate currentCoo
                 if (destinationPiece != 0) {
                     continue;
                 }
+                
+                if (abs(offset.rank) == 2) {
+                    if (board[destination.file][currentCoordinate.rank + offset.rank/2] != 0) {
+                        // Can't move 2 squares if obstacle is in the way
+                        continue;
+                    }
+                }
+                
                 // TODO: Handle pawn promotion when capturing piece
                 // Handle pawn promotion
                 if (isLastRank(destination)) {

@@ -107,6 +107,29 @@ ________
     EXPECT_EQ(whiteMovesAfterPawnMove, expectedWhiteMovesAfterPawnMove);
 }
 
+TEST(ChessGameTest, PawnMovesBlocked) {
+    std::string gameString = R"(
+________
+________
+________
+________
+________
+p_______
+P_______
+________
+)";
+    
+    ChessGame game = ChessGame(gameString);
+    
+    // Check moves
+    std::vector<Move> whiteMoves = game.possibleMovesForPlayer(0);
+    std::vector<Move> expectedWhiteMoves{};
+    
+    EXPECT_EQ(whiteMoves.size(), 0);
+    
+    EXPECT_EQ(whiteMoves, expectedWhiteMoves);
+}
+
 TEST(ChessGameTest, RookMoves) {
     std::string gameString = R"(
 ________
