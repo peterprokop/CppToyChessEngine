@@ -16,12 +16,15 @@ bool isRook(PieceValueType value) {
     return PieceType(value & kPieceTypeMask) == PieceType::Rook;
 }
 
+bool isWhite(PieceValueType value) {
+    return (value & kPlayerMask) == 0;
+}
+
 bool isLastRank(Coordinate destination) {
     return (destination.rank == 0) || (destination.rank == BOARD_SIZE - 1);
 }
 
 char pieceFromValue(PieceValueType value) {
-    const bool isWhite = ((value & 0x10) == 0);
     char printablePiece = '_';
     switch (value % 0x10) {
         case 0:
@@ -51,7 +54,7 @@ char pieceFromValue(PieceValueType value) {
             break;
     }
     
-    if (isWhite) {
+    if (isWhite(value)) {
         printablePiece += ('A' - 'a');
     }
     

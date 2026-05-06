@@ -69,6 +69,101 @@ K_______
     EXPECT_EQ(whiteMovesAfterPromo, expectedWhiteMovesAfterPromo);
 }
 
+TEST(ChessGameTest, PawnPromotionByTakingPiece) {
+    std::string gameString = R"(
+__nnn___
+___P____
+________
+________
+________
+________
+________
+________
+)";
+    
+    ChessGame game = ChessGame(gameString);
+    
+    // Check moves
+    const std::vector<PieceType> promotionPieceTypes = {
+        PieceType::Knight,
+        PieceType::Bishop,
+        PieceType::Rook,
+        PieceType::Queen,
+    };
+    const std::vector<MoveSimple> moves = {
+        MoveSimple({3,6}, {2,7}),
+        MoveSimple({3,6}, {4,7}),
+    };
+    
+    std::vector<Move> whiteMoves = game.possibleMovesForPlayer(0);
+    std::vector<Move> expectedWhiteMoves{};
+    
+    for (const auto& move : moves) {
+        for (const auto& piece : promotionPieceTypes) {
+            const auto promoMove = MovePawnPromotion(piece, move);
+            expectedWhiteMoves.push_back(promoMove);
+        }
+    }
+    
+    EXPECT_EQ(whiteMoves.size(), 8);
+    
+    EXPECT_EQ(whiteMoves, expectedWhiteMoves);
+}
+
+TEST(ChessGameTest, PawnTakingPiece) {
+    std::string gameString = R"(
+________
+__nnn___
+___P____
+________
+________
+________
+________
+________
+)";
+    
+    ChessGame game = ChessGame(gameString);
+    
+    // Check moves
+    const std::vector<Move> expectedWhiteMoves = {
+        MoveSimple({3,5}, {2,6}),
+        MoveSimple({3,5}, {4,6}),
+    };
+    
+    std::vector<Move> whiteMoves = game.possibleMovesForPlayer(0);
+    
+    EXPECT_EQ(whiteMoves.size(), 2);
+    
+    EXPECT_EQ(whiteMoves, expectedWhiteMoves);
+}
+
+TEST(ChessGameTest, BlackPawnTakingPiece) {
+    std::string gameString = R"(
+________
+___p____
+__NNN___
+________
+________
+________
+________
+________
+)";
+    
+    ChessGame game = ChessGame(gameString);
+    
+    // Check moves
+    const std::vector<Move> expectedMoves = {
+        MoveSimple({3,6}, {2,5}),
+        MoveSimple({3,6}, {4,5}),
+    };
+    
+    std::vector<Move> moves = game.possibleMovesForPlayer(1);
+    
+    EXPECT_EQ(moves.size(), 2);
+    
+    EXPECT_EQ(moves, expectedMoves);
+}
+
 TEST(ChessGameTest, PawnMoves) {
     std::string gameString = R"(
 ________

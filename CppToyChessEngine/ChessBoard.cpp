@@ -62,10 +62,52 @@ std::vector<Move> ChessBoard::possibleMovesForNonRaycaster(Coordinate currentCoo
                                                            PieceValueType currentPiece,
                                                            uint8_t player) const {
     std::vector<Move> possibleMoves{};
+    
+    // Check if pawn can capture any pieces
+    if (isPawn(currentPiece)) {
+        std::vector<Coordinate> offsets;
+        if (isWhite(currentPiece)) {
+            offsets = {{-1, 1}, {1, 1}};
+        } else {
+            offsets = {{-1, -1}, {1, -1}};
+        }
+        
+        for (const auto& offset : offsets) {
+            const Coordinate destination = currentCoordinate + offset;
+            if (isWithinBoard(destination)) {
+                const PieceValueType destinationPiece = board[destination.file][destination.rank];
+                if (destinationPiece == 0) {
+                    continue;
+                }
+                if (doesPieceBelongToPlayer(destinationPiece, player)) {
+                    continue;
+                }
+                
+                // TODO: DRY
+                // Handle pawn promotion
+                if (isLastRank(destination)) {
+                    std::ranges::for_each(
+                      kPawnPromotionOptions.begin(),
+                      kPawnPromotionOptions.end(),
+                      [&](PieceType pieceType)
+                      {
+                          possibleMoves.push_back(MovePawnPromotion({
+                              pieceType,
+                              MoveSimple(currentCoordinate, destination)
+                          }));
+                      }
+                  );
+                } else {
+                    // No promotion
+                    possibleMoves.push_back(MoveSimple(currentCoordinate, destination));
+                }
+            }
+        }
+    }
+    
     for (const auto& offset : possibleMoveTargetsForPieceValue(currentPiece)) {
         const Coordinate destination = currentCoordinate + offset;
         if (isWithinBoard(destination)) {
-            // TODO: check if destination is blocked (for all pieces)
             // TODO: check if move generates check for own king
             // TODO: add moves for pawn capture
             // TODO: add moves for en passant capture
@@ -87,7 +129,6 @@ std::vector<Move> ChessBoard::possibleMovesForNonRaycaster(Coordinate currentCoo
                     }
                 }
                 
-                // TODO: Handle pawn promotion when capturing piece
                 // Handle pawn promotion
                 if (isLastRank(destination)) {
                     std::ranges::for_each(

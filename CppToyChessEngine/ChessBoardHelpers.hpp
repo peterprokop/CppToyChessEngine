@@ -41,6 +41,7 @@ bool didPieceMove(PieceValueType value);
 bool doesPieceBelongToPlayer(PieceValueType value, uint8_t player);
 bool isPawn(PieceValueType value);
 bool isRook(PieceValueType value);
+bool isWhite(PieceValueType value);
 bool isLastRank(Coordinate destination);
 
 char pieceFromValue(PieceValueType value);
