@@ -14,6 +14,7 @@ add_executable(
   ChessBoardHelpers.cpp
   ChessGame.cpp
   ChessPlayer.cpp
+  ChessBoard.cpp
   MinMaxEval/MinMaxEval.cpp
 )
 target_compile_options(chess PUBLIC -std=c++23)
@@ -39,6 +40,7 @@ add_executable(
   ChessBoardHelpers.cpp
   ChessGame.cpp
   ChessPlayer.cpp
+  ChessBoard.cpp
   MinMaxEval/MinMaxEval.cpp
 )
 target_compile_options(chess_tests PUBLIC -std=c++23)
